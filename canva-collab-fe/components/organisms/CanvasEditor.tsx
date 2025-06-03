@@ -19,7 +19,6 @@ import {
   BoundingBox,
   DrawingMode,
   DrawingObject,
-  Layer,
   Point,
   ResizeHandle,
 } from "@/types/canvas";
@@ -27,11 +26,6 @@ import {
 import CanvasLayers from "../mollecules/CanvasLayers";
 import CanvasToolbar from "../mollecules/CanvasToolbar";
 
-const initialLayer: Layer = {
-  id: 0,
-  name: "Layer 1",
-  visible: true,
-};
 
 export default function CanvasEditor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

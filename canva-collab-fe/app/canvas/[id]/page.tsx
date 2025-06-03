@@ -56,10 +56,6 @@ export default function CanvasPage() {
   //   }
   // };
 
-  const handleCanvasUpdate = (updatedCanvas: Canvas) => {
-    setCanvas(updatedCanvas);
-  };
-
   if (loading) {
     return (
       <div className="container mx-auto py-12 px-4 flex justify-center items-center">
