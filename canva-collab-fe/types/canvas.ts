@@ -1,27 +1,4 @@
-export interface CanvasElement {
-  id: string;
-  type: "text" | "rectangle" | "image";
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  content?: string; // For text elements
-  backgroundColor?: string; // For shapes
-  borderRadius?: number; // For shapes
-  src?: string; // For images
-  alt?: string; // For images
-}
-
-export interface Canvas {
-  id?: string;
-  name: string;
-  width: number;
-  height: number;
-  elements: CanvasElement[];
-  createdAt: string;
-}
-
-export type DrawingMode =
+type DrawingMode =
   | "select"
   | "freehand"
   | "rectangle"
@@ -33,6 +10,8 @@ export type DrawingMode =
   | "star"
   | "arrow"
   | "hexagon";
+
+type DrawingType = "draw" | "shape" | "text" | "group";
 
 export interface Point {
   x: number;
@@ -48,7 +27,7 @@ export interface BoundingBox {
 
 export interface DrawingObject {
   id: string;
-  type: "draw" | "shape" | "text" | "group";
+  type: DrawingType;
   mode: DrawingMode;
   points: Point[];
   color: string;
@@ -57,8 +36,9 @@ export interface DrawingObject {
   text?: string;
   layerId: number;
   boundingBox: BoundingBox;
-  children?: DrawingObject[]; // For groups
+  children: DrawingObject[]; // For groups
   groupId?: string; // Reference to parent group
+  createdAt: string;
 }
 
 export interface Layer {

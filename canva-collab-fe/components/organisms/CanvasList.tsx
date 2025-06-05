@@ -19,10 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { deleteCanvas, getAllCanvases } from "@/lib/canvas-services";
-import { Canvas } from "@/types/canvas";
+import { DrawingObject } from "@/types/canvas";
 
 export default function CanvasList() {
-  const [canvases, setCanvases] = useState<Canvas[]>([]);
+  const [canvases, setCanvases] = useState<DrawingObject[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -69,6 +69,9 @@ function CanvasToolbar({
 }: any) {
   const selectedShape =
     shapes.find((shape) => shape.name === drawingMode) ?? shapes[0];
+
+  const handleSave = () => {};
+
   return (
     <Card className="m-4 p-4 shadow-lg">
       <div className="flex flex-wrap items-center gap-4">

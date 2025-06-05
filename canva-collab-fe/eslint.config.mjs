@@ -8,14 +8,14 @@ import unusedImports from "eslint-plugin-unused-imports";
 import { dirname } from "path";
 import tseslint from "typescript-eslint";
 import { fileURLToPath } from "url";
- 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
- 
+
 const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
- 
+
 const eslintConfig = [
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
@@ -32,12 +32,12 @@ const eslintConfig = [
       },
     },
   },
- 
+
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   reactPlugin.configs.flat.recommended,
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
- 
+
   prettierRecommended,
   {
     rules: {
@@ -103,12 +103,11 @@ const eslintConfig = [
           ],
         },
       ],
- 
+
       ...hooksPlugin.configs.recommended.rules,
     },
     ignores: ["*.test.tsx"],
   },
 ];
- 
+
 export default eslintConfig;
- 
