@@ -25,6 +25,7 @@ import {
 import CanvasLayers from "../molecules/CanvasLayers";
 import CanvasToolbar from "../molecules/CanvasToolbar";
 
+// TODO break code up - extract hook for functionality and components for UI.
 export default function CanvasEditor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
