@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 import { getCanvasCoordinates, redrawCanvas } from "@/lib/cavas-utils";
-import { DrawingObject, Point } from "@/types/canvas";
+import { DrawingObject } from "@/types/canvas";
 
 import CanvasToolbar2 from "../mollecules/CanvasToolbar2";
 
@@ -27,9 +27,6 @@ function CanvasEditor2({
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState([5]);
 
-  const [startPoint, setStartPoint] = useState<Point | null>(null);
-  const [currentPoint, setCurrentPoint] = useState<Point | null>(null);
-
   const startDrawing = useCallback(
     (
       e:
@@ -37,8 +34,6 @@ function CanvasEditor2({
         | React.TouchEvent<HTMLCanvasElement>
     ) => {
       const coords = getCanvasCoordinates(e, canvasRef);
-      setStartPoint(coords);
-      setCurrentPoint(coords);
 
       const newObject: DrawingObject = {
         id: generateId(),
@@ -68,7 +63,6 @@ function CanvasEditor2({
       if (!newDraw) return;
 
       const coords = getCanvasCoordinates(e, canvasRef);
-      setCurrentPoint(coords);
 
       setNewDraw((prev) => {
         if (!prev) return null;
@@ -107,8 +101,6 @@ function CanvasEditor2({
       });
 
       setNewDraw(null);
-      setStartPoint(null);
-      setCurrentPoint(null);
     },
     [newDraw, setCanvas]
   );
@@ -124,9 +116,13 @@ function CanvasEditor2({
   }, [setCanvas]);
 
   // Redraw when objects change
+  // Just modify the existing useEffect to include newDraw
   useEffect(() => {
-    redrawCanvas(canvasRef, canvas.children);
-  }, [canvas]);
+    const allObjects = newDraw
+      ? [...canvas.children, newDraw]
+      : canvas.children;
+    redrawCanvas(canvasRef, allObjects);
+  }, [canvas, newDraw]); // Add newDraw as dependency
 
   // Update canvas size and redraw when needed
   useEffect(() => {
@@ -148,35 +144,6 @@ function CanvasEditor2({
       window.removeEventListener("resize", resizeCanvas);
     };
   }, [canvas]);
-
-  // Preview shape while drawing
-  // useEffect(() => {
-  //   if (!startPoint || !currentPoint) return;
-
-  //   const previewCanvas = canvasRef.current;
-  //   if (!previewCanvas) return;
-
-  //   const ctx = previewCanvas.getContext("2d");
-  //   if (!ctx) return;
-
-  //   ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-
-  //   const previewObject: DrawingObject = {
-  //     id: generateId(),
-  //     type: "draw",
-  //     mode: "freehand",
-  //     points: [startPoint, currentPoint],
-  //     color: brushColor,
-  //     size: brushSize[0],
-  //     filled: false,
-  //     layerId: 0,
-  //     boundingBox: { x: 0, y: 0, width: 0, height: 0 },
-  //     children: [],
-  //     createdAt: new Date().toISOString(),
-  //   };
-
-  //   drawShape(ctx, previewObject, true);
-  // }, [startPoint, currentPoint, brushColor, brushSize]);
 
   return (
     <div className="h-screen w-full flex-1 flex flex-col bg-gray-50">
