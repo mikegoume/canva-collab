@@ -4,6 +4,7 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Input } from "@/components/ui/input";
 import {
   calculateBoundingBox,
   drawSelectionUI,
@@ -27,8 +28,8 @@ import CanvasToolbar from "../mollecules/CanvasToolbar";
 
 export default function CanvasEditor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // const previewCanvasRef = useRef<HTMLCanvasElement>(null);
-  // const selectionCanvasRef = useRef<HTMLCanvasElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const selectionCanvasRef = useRef<HTMLCanvasElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
 
   const [isDrawing, setIsDrawing] = useState(false);
@@ -436,38 +437,38 @@ export default function CanvasEditor() {
     activeLayerId,
   ]);
 
-  // const handleTextSubmit = useCallback(() => {
-  //   if (textPosition && textValue.trim()) {
-  //     const textObject: DrawingObject = {
-  //       id: generateId(),
-  //       type: "text",
-  //       mode: "text",
-  //       points: [textPosition],
-  //       color: brushColor,
-  //       size: brushSize[0] * 2,
-  //       filled: false,
-  //       text: textValue,
-  //       layerId: activeLayerId,
-  //       boundingBox: { x: 0, y: 0, width: 0, height: 0 },
-  //     };
+  const handleTextSubmit = useCallback(() => {
+    if (textPosition && textValue.trim()) {
+      const textObject: DrawingObject = {
+        id: generateId(),
+        type: "text",
+        mode: "text",
+        points: [textPosition],
+        color: brushColor,
+        size: brushSize[0] * 2,
+        filled: false,
+        text: textValue,
+        layerId: activeLayerId,
+        boundingBox: { x: 0, y: 0, width: 0, height: 0 },
+      };
 
-  //     textObject.boundingBox = calculateBoundingBox(textObject);
-  //     setObjects((prev) => [...prev, textObject]);
-  //     addToHistory([...objects, textObject]);
-  //   }
+      textObject.boundingBox = calculateBoundingBox(textObject);
+      setObjects((prev) => [...prev, textObject]);
+      addToHistory([...objects, textObject]);
+    }
 
-  //   setIsTextMode(false);
-  //   setTextPosition(null);
-  //   setTextValue("");
-  // }, [
-  //   textPosition,
-  //   textValue,
-  //   brushColor,
-  //   brushSize,
-  //   activeLayerId,
-  //   objects,
-  //   addToHistory,
-  // ]);
+    setIsTextMode(false);
+    setTextPosition(null);
+    setTextValue("");
+  }, [
+    textPosition,
+    textValue,
+    brushColor,
+    brushSize,
+    activeLayerId,
+    objects,
+    addToHistory,
+  ]);
 
   const undo = useCallback(() => {
     if (historyIndex > 0) {
@@ -488,25 +489,26 @@ export default function CanvasEditor() {
   // Update canvas size and redraw when needed
   useEffect(() => {
     const canvas = canvasRef.current;
-    // const previewCanvas = previewCanvasRef.current;
-    // const selectionCanvas = selectionCanvasRef.current;
-    if (
-      !canvas
-      //|| !previewCanvas || !selectionCanvas
-    )
-      return;
+    const previewCanvas = previewCanvasRef.current;
+    const selectionCanvas = selectionCanvasRef.current;
+    if (!canvas || !previewCanvas || !selectionCanvas) return;
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width;
       canvas.height = rect.height;
-      // previewCanvas.width = rect.width;
-      // previewCanvas.height = rect.height;
-      // selectionCanvas.width = rect.width;
-      // selectionCanvas.height = rect.height;
+      previewCanvas.width = rect.width;
+      previewCanvas.height = rect.height;
+      selectionCanvas.width = rect.width;
+      selectionCanvas.height = rect.height;
 
       redrawCanvas(canvasRef, objects);
-      drawSelectionUI(canvasRef, objects, selectedObjects, selectionBox);
+      drawSelectionUI(
+        selectionCanvasRef,
+        objects,
+        selectedObjects,
+        selectionBox
+      );
     };
 
     resizeCanvas();
@@ -524,7 +526,7 @@ export default function CanvasEditor() {
 
   // Update selection UI when selection changes
   useEffect(() => {
-    drawSelectionUI(canvasRef, objects, selectedObjects, selectionBox);
+    drawSelectionUI(selectionCanvasRef, objects, selectedObjects, selectionBox);
   }, [objects, selectedObjects, selectionBox]);
 
   // Preview shape while drawing
@@ -540,7 +542,7 @@ export default function CanvasEditor() {
     )
       return;
 
-    const previewCanvas = canvasRef.current;
+    const previewCanvas = previewCanvasRef.current;
     if (!previewCanvas) return;
 
     const ctx = previewCanvas.getContext("2d");
@@ -689,19 +691,19 @@ export default function CanvasEditor() {
           />
 
           {/* Preview Canvas */}
-          {/* <canvas
+          <canvas
             ref={previewCanvasRef}
             className="absolute inset-0 w-full h-full pointer-events-none"
-          /> */}
+          />
 
           {/* Selection Canvas */}
-          {/* <canvas
+          <canvas
             ref={selectionCanvasRef}
             className="absolute inset-0 w-full h-full pointer-events-none"
-          /> */}
+          />
 
           {/* Text Input */}
-          {/* {isTextMode && textPosition && (
+          {isTextMode && textPosition && (
             <div
               className="absolute"
               style={{
@@ -727,7 +729,7 @@ export default function CanvasEditor() {
                 placeholder="Enter text..."
               />
             </div>
-          )} */}
+          )}
         </div>
       </div>
     </div>
