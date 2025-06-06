@@ -70,23 +70,23 @@ function CanvasToolbar({
   const selectedShape =
     shapes.find((shape) => shape.name === drawingMode) ?? shapes[0];
   return (
-    <Card className="m-4 p-4 shadow-lg">
-      <div className="flex flex-wrap items-center gap-4">
+    <Card className="p-4 m-4 shadow-lg">
+      <div className="flex flex-wrap gap-4 items-center">
         {/* Drawing Tools */}
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <Button
             variant={drawingMode === "select" ? "default" : "outline"}
             size="sm"
             onClick={() => setDrawingMode("select")}
           >
-            <MousePointer className="h-4 w-4" />
+            <MousePointer className="size-4" />
           </Button>
           <Button
             variant={drawingMode === "freehand" ? "default" : "outline"}
             size="sm"
             onClick={() => setDrawingMode("freehand")}
           >
-            <Edit3 className="h-4 w-4" />
+            <Edit3 className="size-4" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -97,9 +97,9 @@ function CanvasToolbar({
                     : "outline"
                 }
                 size="sm"
-                className="flex items-center gap-2"
+                className="flex gap-2 items-center"
               >
-                <selectedShape.icon className="h-4 w-4" />
+                <selectedShape.icon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-auto" align="start">
@@ -110,11 +110,11 @@ function CanvasToolbar({
                     onClick={() => setDrawingMode(name as DrawingMode)}
                   >
                     {selectedShape.name === name ? (
-                      <Check className="h-4 w-4" />
+                      <Check className="size-4" />
                     ) : (
-                      <div className="h-4 w-4" />
+                      <div className="size-4" />
                     )}
-                    <Icon className="h-4 w-4" />
+                    <Icon className="size-4" />
                     {label}
                   </DropdownMenuItem>
                 ))}
@@ -126,20 +126,20 @@ function CanvasToolbar({
             size="sm"
             onClick={() => setDrawingMode("text")}
           >
-            <Type className="h-4 w-4" />
+            <Type className="size-4" />
           </Button>
           <Button
             variant={drawingMode === "eraser" ? "default" : "outline"}
             size="sm"
             onClick={() => setDrawingMode("eraser")}
           >
-            <Eraser className="h-4 w-4" />
+            <Eraser className="size-4" />
           </Button>
         </div>
 
         {/* Group Controls */}
         {selectedObjects.length > 0 && (
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 items-center">
             <Button
               variant="outline"
               size="sm"
@@ -147,7 +147,7 @@ function CanvasToolbar({
               disabled={selectedObjects.length < 2}
               title="Group (Ctrl+G)"
             >
-              <Group className="h-4 w-4 mr-1" />
+              <Group className="mr-1 size-4" />
               Group
             </Button>
             <Button
@@ -156,7 +156,7 @@ function CanvasToolbar({
               onClick={ungroup}
               title="Ungroup (Ctrl+U)"
             >
-              <Ungroup className="h-4 w-4 mr-1" />
+              <Ungroup className="mr-1 size-4" />
               Ungroup
             </Button>
             <Button
@@ -165,7 +165,7 @@ function CanvasToolbar({
               onClick={copyObjects}
               title="Copy (Ctrl+C)"
             >
-              <Copy className="h-4 w-4" />
+              <Copy className="size-4" />
             </Button>
             <Button
               variant="outline"
@@ -174,7 +174,7 @@ function CanvasToolbar({
               disabled={clipboard.length === 0}
               title="Paste (Ctrl+V)"
             >
-              <Clipboard className="h-4 w-4" />
+              <Clipboard className="size-4" />
             </Button>
           </div>
         )}
@@ -185,7 +185,7 @@ function CanvasToolbar({
           drawingMode === "triangle" ||
           drawingMode === "star" ||
           drawingMode === "hexagon") && (
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 items-center">
             <Button
               variant={filled ? "default" : "outline"}
               size="sm"
@@ -197,7 +197,7 @@ function CanvasToolbar({
         )}
 
         {/* Brush Size */}
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <span className="text-sm font-medium">Size:</span>
           <div className="w-24">
             <Slider
@@ -209,7 +209,7 @@ function CanvasToolbar({
               className="w-full"
             />
           </div>
-          <span className="text-sm text-gray-500 w-8">{brushSize[0]}</span>
+          <span className="w-8 text-sm text-gray-500">{brushSize[0]}</span>
         </div>
 
         {/* Color Palette */}
@@ -223,7 +223,7 @@ function CanvasToolbar({
             onClick={undo}
             disabled={historyIndex <= 0}
           >
-            <Undo className="h-4 w-4" />
+            <Undo className="size-4" />
           </Button>
           <Button
             variant="outline"
@@ -231,14 +231,14 @@ function CanvasToolbar({
             onClick={redo}
             disabled={historyIndex >= history.length - 1}
           >
-            <Redo className="h-4 w-4" />
+            <Redo className="size-4" />
           </Button>
         </div>
 
         {/* Actions */}
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={clearCanvas}>
-            <RotateCcw className="h-4 w-4 mr-1" />
+            <RotateCcw className="mr-1 size-4" />
             Clear
           </Button>
         </div>

@@ -16,8 +16,8 @@ function CreateCanvasButton() {
     try {
       const canvasId = await createCanvas({
         name: "New Canvas",
-        width: parseInt("600"),
-        height: parseInt("600"),
+        width: 600,
+        height: 600,
         elements: [],
         createdAt: new Date().toISOString(),
       });
@@ -30,8 +30,8 @@ function CreateCanvasButton() {
   };
 
   return (
-    <Button size="lg" className="mt-4 gap-2" onClick={handleCreateNewCanvas}>
-      <PlusCircle className="h-5 w-5" />
+    <Button size="lg" className="gap-2 mt-4" onClick={handleCreateNewCanvas}>
+      <PlusCircle className="size-5" />
       Create New Canvas
     </Button>
   );

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 "use client";
 
 import type React from "react";
@@ -23,9 +22,8 @@ import {
   ResizeHandle,
 } from "@/types/canvas";
 
-import CanvasLayers from "../mollecules/CanvasLayers";
-import CanvasToolbar from "../mollecules/CanvasToolbar";
-
+import CanvasLayers from "../molecules/CanvasLayers";
+import CanvasToolbar from "../molecules/CanvasToolbar";
 
 export default function CanvasEditor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -75,7 +73,7 @@ export default function CanvasEditor() {
       });
       setHistoryIndex((prev) => prev + 1);
     },
-    [historyIndex]
+    [historyIndex],
   );
 
   const clearCanvas = useCallback(() => {
@@ -88,7 +86,7 @@ export default function CanvasEditor() {
     if (selectedObjects.length < 2) return;
 
     const selectedObjs = objects.filter((obj) =>
-      selectedObjects.includes(obj.id)
+      selectedObjects.includes(obj.id),
     );
     const groupId = generateId();
 
@@ -108,7 +106,7 @@ export default function CanvasEditor() {
     group.boundingBox = calculateBoundingBox(group);
 
     const newObjects = objects.filter(
-      (obj) => !selectedObjects.includes(obj.id)
+      (obj) => !selectedObjects.includes(obj.id),
     );
     newObjects.push(group);
 
@@ -147,7 +145,7 @@ export default function CanvasEditor() {
 
   const copyObjects = useCallback(() => {
     const selectedObjs = objects.filter((obj) =>
-      selectedObjects.includes(obj.id)
+      selectedObjects.includes(obj.id),
     );
     setClipboard(selectedObjs.map((obj) => ({ ...obj, id: generateId() })));
   }, [selectedObjects, objects]);
@@ -175,7 +173,7 @@ export default function CanvasEditor() {
     (
       e:
         | React.MouseEvent<HTMLCanvasElement>
-        | React.TouchEvent<HTMLCanvasElement>
+        | React.TouchEvent<HTMLCanvasElement>,
     ) => {
       const coords = getCanvasCoordinates(e, canvasRef);
 
@@ -200,7 +198,7 @@ export default function CanvasEditor() {
             setSelectedObjects((prev) =>
               prev.includes(clickedObject.id)
                 ? prev.filter((id) => id !== clickedObject.id)
-                : [...prev, clickedObject.id]
+                : [...prev, clickedObject.id],
             );
           } else {
             setSelectedObjects([clickedObject.id]);
@@ -254,14 +252,14 @@ export default function CanvasEditor() {
       brushColor,
       brushSize,
       activeLayerId,
-    ]
+    ],
   );
 
   const draw = useCallback(
     (
       e:
         | React.MouseEvent<HTMLCanvasElement>
-        | React.TouchEvent<HTMLCanvasElement>
+        | React.TouchEvent<HTMLCanvasElement>,
     ) => {
       const coords = getCanvasCoordinates(e, canvasRef);
 
@@ -290,7 +288,7 @@ export default function CanvasEditor() {
 
               newObj.boundingBox = calculateBoundingBox(newObj);
               return newObj;
-            })
+            }),
           );
         } else if (isDragging && dragStart) {
           // Handle dragging
@@ -318,7 +316,7 @@ export default function CanvasEditor() {
               }
               newObj.boundingBox = calculateBoundingBox(newObj);
               return newObj;
-            })
+            }),
           );
 
           setDragStart(coords);
@@ -359,7 +357,7 @@ export default function CanvasEditor() {
       resizeHandle,
       selectedObjects,
       isDrawing,
-    ]
+    ],
   );
 
   const stopDrawing = useCallback(() => {
@@ -508,7 +506,7 @@ export default function CanvasEditor() {
         selectionCanvasRef,
         objects,
         selectedObjects,
-        selectionBox
+        selectionBox,
       );
     };
 
@@ -609,7 +607,7 @@ export default function CanvasEditor() {
 
       if (e.key === "Delete" || e.key === "Backspace") {
         const newObjects = objects.filter(
-          (obj) => !selectedObjects.includes(obj.id)
+          (obj) => !selectedObjects.includes(obj.id),
         );
         setObjects(newObjects);
         setSelectedObjects([]);
@@ -632,7 +630,7 @@ export default function CanvasEditor() {
   ]);
 
   return (
-    <div className="h-screen w-full flex flex-col bg-gray-50">
+    <div className="flex flex-col w-full h-screen bg-gray-50">
       <CanvasToolbar
         selectedObjects={selectedObjects}
         createGroup={createGroup}
@@ -653,7 +651,7 @@ export default function CanvasEditor() {
         setFilled={setFilled}
         filled={filled}
       />
-      <div className="flex flex-1 mx-4 mb-4 gap-4">
+      <div className="flex flex-1 gap-4 mx-4 mb-4">
         <CanvasLayers
           activeLayerId={activeLayerId}
           selectedObjects={selectedObjects}
@@ -661,10 +659,10 @@ export default function CanvasEditor() {
         />
 
         {/* Canvas Container */}
-        <div className="flex-1 relative">
+        <div className="relative flex-1">
           <canvas
             ref={canvasRef}
-            className="absolute inset-0 w-full h-full border border-gray-300 rounded-lg shadow-lg bg-white"
+            className="absolute inset-0 w-full h-full bg-white rounded-lg border border-gray-300 shadow-lg"
             onMouseDown={startDrawing}
             onMouseMove={draw}
             onMouseUp={stopDrawing}

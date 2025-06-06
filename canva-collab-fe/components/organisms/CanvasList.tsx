@@ -25,6 +25,7 @@ export default function CanvasList() {
   const [canvases, setCanvases] = useState<Canvas[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // TODO : Use react query for data fetching - it provides loading state, error state,caching, and more out of the box
   useEffect(() => {
     const loadCanvases = async () => {
       try {
@@ -53,16 +54,16 @@ export default function CanvasList() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardContent className="p-0">
-              <div className="bg-muted h-40"></div>
+              <div className="h-40 bg-muted"></div>
             </CardContent>
             <CardFooter className="p-4">
               <div className="space-y-2 w-full">
-                <div className="h-5 bg-muted rounded w-1/2"></div>
-                <div className="h-4 bg-muted rounded w-1/4"></div>
+                <div className="w-1/2 h-5 rounded bg-muted"></div>
+                <div className="w-1/4 h-4 rounded bg-muted"></div>
               </div>
             </CardFooter>
           </Card>
@@ -73,8 +74,8 @@ export default function CanvasList() {
 
   if (canvases.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground mb-4">
+      <div className="py-12 text-center">
+        <p className="mb-4 text-muted-foreground">
           You don&apos;t have any canvases yet.
         </p>
         <Link href="/canvas/new">
@@ -85,7 +86,7 @@ export default function CanvasList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {canvases.map((canvas) => (
         <Card
           key={canvas.id}
@@ -93,8 +94,8 @@ export default function CanvasList() {
         >
           <CardContent className="p-0">
             <Link href={`/canvas/${canvas.id}`}>
-              <div className="bg-muted h-40 flex items-center justify-center border-b">
-                <div className="w-3/4 h-3/4 bg-background relative">
+              <div className="flex justify-center items-center h-40 border-b bg-muted">
+                <div className="relative size-3/4 bg-background">
                   {canvas.elements.slice(0, 3).map((element, idx) => {
                     if (element.type === "rectangle") {
                       return (
@@ -118,7 +119,7 @@ export default function CanvasList() {
               </div>
             </Link>
           </CardContent>
-          <CardFooter className="p-4 flex justify-between items-center">
+          <CardFooter className="flex justify-between items-center p-4">
             <div>
               <h3 className="font-medium">{canvas.name}</h3>
               <p className="text-xs text-muted-foreground">
@@ -130,8 +131,8 @@ export default function CanvasList() {
             </div>
             <div className="flex space-x-1">
               <Link href={`/canvas/${canvas.id}`}>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Edit2 className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="size-8">
+                  <Edit2 className="size-4" />
                   <span className="sr-only">Edit</span>
                 </Button>
               </Link>
@@ -140,9 +141,9 @@ export default function CanvasList() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    className="size-8 text-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                     <span className="sr-only">Delete</span>
                   </Button>
                 </AlertDialogTrigger>

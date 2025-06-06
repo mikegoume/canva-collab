@@ -20,12 +20,13 @@ interface ColorPickerProps {
   onBlur?: () => void;
 }
 
-export interface ButtonProps
+interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
+// TODO forwardRef is deprecated in version 19 of React. You can now pass ref directly to components.
 const ColorPicker = forwardRef<
   HTMLInputElement,
   Omit<ButtonProps, "value" | "onChange" | "onBlur"> & ColorPickerProps
@@ -34,9 +35,11 @@ const ColorPicker = forwardRef<
     { disabled, value, onChange, onBlur, name, className, ...props },
     forwardedRef,
   ) => {
+    // TODO: why is this hook needed? just pass forwardedRef directly?
     const ref = useForwardedRef(forwardedRef);
     const [open, setOpen] = useState(false);
 
+    // TODO: useMemo is really not needed here.
     const parsedValue = useMemo(() => {
       return value || "#FFFFFF";
     }, [value]);

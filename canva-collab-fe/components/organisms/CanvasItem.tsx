@@ -107,7 +107,7 @@ export default function CanvasItem({
     switch (element.type) {
       case "text":
         return (
-          <div className="w-full h-full p-2 overflow-hidden">
+          <div className="overflow-hidden p-2 w-full h-full">
             {element.content}
           </div>
         );
@@ -128,7 +128,7 @@ export default function CanvasItem({
             height={element.height}
             src="https://s3.amazonaws.com/my-bucket/profile.png"
             alt={element.alt || "Canvas image"}
-            className="w-full h-full object-cover"
+            className="object-cover w-full h-full"
           />
         );
       default:
@@ -141,7 +141,7 @@ export default function CanvasItem({
       ref={itemRef}
       className={cn(
         "absolute flex",
-        isSelected && "outline outline-2 outline-primary",
+        isSelected && "outline-2 outline-primary",
         isDragging && "cursor-grabbing opacity-80",
       )}
       style={{
@@ -164,14 +164,14 @@ export default function CanvasItem({
           <Button
             variant="destructive"
             size="icon"
-            className="absolute -top-3 -right-3 h-6 w-6 rounded-full opacity-90 hover:opacity-100"
+            className="absolute -top-3 -right-3 w-6 h-6 rounded-full opacity-90 hover:opacity-100"
             onClick={handleDelete}
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="w-3 h-3" />
           </Button>
 
           <div
-            className="absolute bottom-0 right-0 w-4 h-4 bg-primary rounded-tl-sm cursor-se-resize"
+            className="absolute right-0 bottom-0 w-4 h-4 rounded-tl-sm bg-primary cursor-se-resize"
             onMouseDown={handleResizeStart}
           />
         </>
