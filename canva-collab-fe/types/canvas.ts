@@ -27,6 +27,7 @@ export interface BoundingBox {
 
 export interface DrawingObject {
   id: string;
+  name: string;
   type: DrawingType;
   mode: DrawingMode;
   points: Point[];

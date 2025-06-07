@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,6 +15,7 @@ interface ICanvasToolbar2Props {
   setBrushSize: (value: number[]) => void;
   brushColor: string;
   setBrushColor: (value: string) => void;
+  handleSaveCanvas: () => Promise<void>
 }
 
 function CanvasToolbar2({
@@ -23,6 +24,7 @@ function CanvasToolbar2({
   brushSize,
   setBrushColor,
   setBrushSize,
+  handleSaveCanvas
 }: ICanvasToolbar2Props) {
   return (
     <Card className="m-4 p-4 shadow-lg flex flex-row justify-center">
@@ -49,6 +51,10 @@ function CanvasToolbar2({
           <Button variant="outline" size="sm" onClick={clearCanvas}>
             <RotateCcw className="h-4 w-4 mr-1" />
             Clear
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleSaveCanvas}>
+            <Save className="h-4 w-4 mr-1" />
+            Save
           </Button>
         </div>
       </div>

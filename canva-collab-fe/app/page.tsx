@@ -1,4 +1,5 @@
 import CreateCanvasButton from "@/components/atoms/CreateCanvasButton";
+import CanvasList from "@/components/organisms/CanvasList";
 
 export default function Home() {
   return (
@@ -14,10 +15,10 @@ export default function Home() {
         <CreateCanvasButton />
       </div>
 
-      {/* <section className="my-12">
+      <section className="my-12">
         <h2 className="text-2xl font-semibold mb-6">Your Canvases</h2>
         <CanvasList />
-      </section> */}
+      </section>
     </main>
   );
 }

@@ -59,13 +59,10 @@ export default function CanvasPage() {
     );
   }
 
-  console.log("canvas: ", canvas);
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1">
-          {/* <CanvasEditor /> */}
           <CanvasEditor2 canvas={canvas} setCanvas={setCanvas} />
         </div>
       </div>

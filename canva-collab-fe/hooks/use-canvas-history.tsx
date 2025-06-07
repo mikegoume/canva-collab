@@ -2,14 +2,14 @@
 
 import { useCallback, useState } from "react";
 
-import { Canvas } from "@/types/canvas";
+import { DrawingObject } from "@/types/canvas";
 
-export function useCanvasHistory(initialCanvas: Canvas) {
-  const [history, setHistory] = useState<Canvas[]>([initialCanvas]);
+export function useCanvasHistory(initialCanvas: DrawingObject) {
+  const [history, setHistory] = useState<DrawingObject[]>([initialCanvas]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const addToHistory = useCallback(
-    (canvas: Canvas) => {
+    (canvas: DrawingObject) => {
       // Remove any future history entries if we're not at the end
       const newHistory = history.slice(0, currentIndex + 1);
 
@@ -25,7 +25,7 @@ export function useCanvasHistory(initialCanvas: Canvas) {
       setHistory([...newHistory, canvas]);
       setCurrentIndex(newHistory.length);
     },
-    [history, currentIndex],
+    [history, currentIndex]
   );
 
   const undo = useCallback(() => {

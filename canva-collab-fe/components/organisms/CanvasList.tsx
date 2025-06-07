@@ -95,25 +95,7 @@ export default function CanvasList() {
             <Link href={`/canvas/${canvas.id}`}>
               <div className="bg-muted h-40 flex items-center justify-center border-b">
                 <div className="w-3/4 h-3/4 bg-background relative">
-                  {canvas.elements.slice(0, 3).map((element, idx) => {
-                    if (element.type === "rectangle") {
-                      return (
-                        <div
-                          key={idx}
-                          className="absolute"
-                          style={{
-                            left: `${(element.x / canvas.width) * 100}%`,
-                            top: `${(element.y / canvas.height) * 100}%`,
-                            width: `${(element.width / canvas.width) * 100}%`,
-                            height: `${(element.height / canvas.height) * 100}%`,
-                            backgroundColor:
-                              element.backgroundColor || "#cbd5e1",
-                          }}
-                        />
-                      );
-                    }
-                    return null;
-                  })}
+                  
                 </div>
               </div>
             </Link>
