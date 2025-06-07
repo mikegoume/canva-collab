@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -19,40 +18,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { deleteCanvas, getAllCanvases } from "@/lib/canvas-services";
-import { Canvas } from "@/types/canvas";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CanvasList() {
-  const [canvases, setCanvases] = useState<Canvas[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  // TODO : Use react query for data fetching - it provides loading state, error state,caching, and more out of the box
-  useEffect(() => {
-    const loadCanvases = async () => {
-      try {
-        const canvasData = await getAllCanvases();
-        setCanvases(canvasData);
-      } catch (error) {
-        //TODO: Handle error
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    data: canvases = [],
+    error,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["canvases"],
+    queryFn: getAllCanvases,
+  });
 
-    loadCanvases();
-  }, []);
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteCanvas(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["canvases"] });
+    },
+  });
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteCanvas(id);
-      setCanvases(canvases.filter((canvas) => canvas.id !== id));
-    } catch (error) {
-      //TODO: Handle error
-      console.error(error);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
@@ -68,6 +56,14 @@ export default function CanvasList() {
             </CardFooter>
           </Card>
         ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {(error as Error).message}
       </div>
     );
   }
@@ -158,7 +154,7 @@ export default function CanvasList() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => handleDelete(canvas.id as string)}
+                      onClick={() => deleteMutation.mutate(canvas.id as string)}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
                       Delete
