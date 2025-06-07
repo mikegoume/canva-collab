@@ -7,11 +7,11 @@ import { useParams } from "next/navigation";
 import CanvasEditor from "@/components/organisms/CanvasEditor";
 import { Button } from "@/components/ui/button";
 import { getCanvas } from "@/lib/canvas-services";
-import { Canvas } from "@/types/canvas";
+import { Canvas, DrawingObject } from "@/types/canvas";
 
 export default function CanvasPage() {
   const params = useParams();
-  const [canvas, setCanvas] = useState<Canvas | null>(null);
+  const [canvas, setCanvas] = useState<DrawingObject | null>(null);
   const [loading, setLoading] = useState(true);
   const canvasId = params.id as string;
 
@@ -86,8 +86,8 @@ export default function CanvasPage() {
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-auto p-4">
           <CanvasEditor
-          // canvas={canvas}
-          //  onCanvasUpdate={handleCanvasUpdate}
+            canvas={canvas}
+            // onCanvasUpdate={handleCanvasUpdate}
           />
         </div>
       </div>

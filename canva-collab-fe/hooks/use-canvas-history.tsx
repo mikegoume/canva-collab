@@ -1,33 +1,25 @@
 "use client";
 
+import { DrawingObject } from "@/types/canvas";
 import { useCallback, useState } from "react";
 
-import { Canvas } from "@/types/canvas";
-
-export function useCanvasHistory(initialCanvas: Canvas) {
-  const [history, setHistory] = useState<Canvas[]>([initialCanvas]);
+export function useCanvasHistory(initialCanvas: DrawingObject) {
+  const [history, setHistory] = useState<DrawingObject[]>([initialCanvas]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // TODO: are useCallbacks here necessary? If there's no performance issue maybe we don't need them - keeping code more readable
-  const addToHistory = useCallback(
-    (canvas: Canvas) => {
-      // Remove any future history entries if we're not at the end
-      const newHistory = history.slice(0, currentIndex + 1);
+  const addToHistory = (canvas: DrawingObject) => {
+    // Remove any future history entries if we're not at the end
+    const newHistory = history.slice(0, currentIndex + 1);
 
-      // Don't add if it's identical to the current state
-      if (
-        JSON.stringify(newHistory[newHistory.length - 1]) ===
-        JSON.stringify(canvas)
-      ) {
-        return;
-      }
+    // Don't add if it's identical to the current state
+    if (JSON.stringify(newHistory.at(-1)) === JSON.stringify(canvas)) {
+      return;
+    }
 
-      // Add the new canvas state and update the index
-      setHistory([...newHistory, canvas]);
-      setCurrentIndex(newHistory.length);
-    },
-    [history, currentIndex],
-  );
+    // Add the new canvas state and update the index
+    setHistory([...newHistory, canvas]);
+    setCurrentIndex(newHistory.length);
+  };
 
   const undo = useCallback(() => {
     if (currentIndex > 0) {

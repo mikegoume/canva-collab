@@ -59,6 +59,7 @@ export interface DrawingObject {
   boundingBox: BoundingBox;
   children?: DrawingObject[]; // For groups
   groupId?: string; // Reference to parent group
+  createdAt: string;
 }
 
 export interface Layer {
