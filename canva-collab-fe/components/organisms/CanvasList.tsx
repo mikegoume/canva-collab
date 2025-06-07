@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { deleteCanvas, getAllCanvases } from "@/lib/canvas-services";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CanvasList() {
   const queryClient = useQueryClient();
@@ -90,28 +90,8 @@ export default function CanvasList() {
         >
           <CardContent className="p-0">
             <Link href={`/canvas/${canvas.id}`}>
-              <div className="flex justify-center items-center h-40 border-b bg-muted">
-                {/* <div className="relative size-3/4 bg-background">
-                  {canvas.children.slice(0, 3).map((element, idx) => {
-                    if (element.type === "rectangle") {
-                      return (
-                        <div
-                          key={idx}
-                          className="absolute"
-                          style={{
-                            left: `${(element.x / canvas.width) * 100}%`,
-                            top: `${(element.y / canvas.height) * 100}%`,
-                            width: `${(element.width / canvas.width) * 100}%`,
-                            height: `${(element.height / canvas.height) * 100}%`,
-                            backgroundColor:
-                              element.backgroundColor || "#cbd5e1",
-                          }}
-                        />
-                      );
-                    }
-                    return null;
-                  })}
-                </div> */}
+              <div className="bg-muted h-40 flex items-center justify-center border-b">
+                <div className="w-3/4 h-3/4 bg-background relative"></div>
               </div>
             </Link>
           </CardContent>
