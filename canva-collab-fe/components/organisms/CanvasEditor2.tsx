@@ -11,8 +11,8 @@ import { updateCanvas } from "@/lib/canvas-services";
 import { getCanvasCoordinates, redrawCanvas } from "@/lib/cavas-utils";
 import { DrawingObject } from "@/types/canvas";
 
-import CanvasLayers from "../mollecules/CanvasLayers";
-import CanvasToolbar2 from "../mollecules/CanvasToolbar2";
+import CanvasLayers from "../molecules/CanvasLayers";
+import CanvasToolbar2 from "../molecules/CanvasToolbar2";
 
 export const generateId = () => Math.random().toString(36).substr(2, 9);
 
