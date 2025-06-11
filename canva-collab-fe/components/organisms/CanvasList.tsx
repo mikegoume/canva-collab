@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { deleteCanvas, getAllCanvases } from "@/lib/canvas-services";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CanvasList() {
   const queryClient = useQueryClient();
