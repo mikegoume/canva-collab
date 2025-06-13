@@ -55,6 +55,7 @@ const startDrawing = useCallback(
 
     const newObject: DrawingObject = {
       id: generateId(),
+      title: "New Canvas",
       type: "draw",
       mode: "freehand",
       points: [coords],
