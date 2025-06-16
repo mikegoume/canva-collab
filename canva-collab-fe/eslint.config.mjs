@@ -105,6 +105,12 @@ const eslintConfig = [
     },
     ignores: ["*.test.tsx"],
   },
+  {
+    ignores: [
+      '**/.next/**',
+      '**/node_modules/**',
+    ],
+  },
 ];
 
 export default eslintConfig;

@@ -9,6 +9,7 @@ import React, {
 
 import { updateCanvas } from "@/lib/canvas-services";
 import { getCanvasCoordinates, redrawCanvas } from "@/lib/cavas-utils";
+import { awareness,yCanvas } from "@/lib/yjs";
 import { DrawingObject } from "@/types/canvas";
 
 import CanvasLayers from "../molecules/CanvasLayers";
@@ -16,41 +17,76 @@ import CanvasToolbar2 from "../molecules/CanvasToolbar2";
 
 export const generateId = () => Math.random().toString(36).substr(2, 9);
 
-function CanvasEditor2({
-  canvas,
-  setCanvas,
-}: {
-  canvas: DrawingObject;
-  setCanvas: Dispatch<SetStateAction<DrawingObject | null>>;
-}) {
+ type CanvasEditor2Props = {
+  canvas: DrawingObject,
+  setCanvas:  Dispatch<SetStateAction<DrawingObject | null>>
+}
+
+function CanvasEditor2({ canvas, setCanvas }: CanvasEditor2Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [newDraw, setNewDraw] = useState<DrawingObject | null>(null);
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState([5]);
   const [activeLayerId, setActiveLayerId] = useState(0);
+  const [remoteCursors, setRemoteCursors] = useState<{ [clientId: number]: { x: number; y: number } }>({});
 
-// Update the useEffect that redraws the canvas
-useEffect(() => {
-  // Filter canvas children to only include objects from the active layer
-  const activeLayerObjects = canvas.children.filter(
-    (obj) => obj.layerId === activeLayerId
-  );
-  
-  // Include the current drawing if it exists and belongs to active layer
-  const allObjects = newDraw && newDraw.layerId === activeLayerId
-    ? [...activeLayerObjects, newDraw]
-    : activeLayerObjects;
-    
-  redrawCanvas(canvasRef, allObjects);
-}, [canvas, newDraw, activeLayerId]); // Add activeLayerId as dependency
+  // Sync canvas state with Yjs shared map
+  useEffect(() => {
+    const updateFromYjs = () => {
+      const yData = yCanvas.get("data");
+      if (yData) {
+        setCanvas(yData);
+      }
+    };
 
-const startDrawing = useCallback(
-  (
-    e:
-      | React.MouseEvent<HTMLCanvasElement>
-      | React.TouchEvent<HTMLCanvasElement>
-  ) => {
+    updateFromYjs();
+    yCanvas.observe(updateFromYjs);
+    return () => yCanvas.unobserve(updateFromYjs);
+  }, [setCanvas]);
+
+  const updateSharedCanvas = (updatedCanvas: DrawingObject | null) => {
+    yCanvas.set("data", updatedCanvas);
+  };
+
+  useEffect(() => {
+    const randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+    awareness.setLocalStateField("color", randomColor);
+  }, []);
+
+  // Awareness subscription for remote cursors
+  useEffect(() => {
+    const onAwarenessChange = () => {
+      const states = awareness.getStates();
+      const cursors: { [clientId: number]: { x: number; y: number } } = {};
+
+      states.forEach((state, clientId) => {
+        if (clientId !== awareness.clientID && state.cursor) {
+          cursors[clientId] = state.cursor;
+        }
+      });
+
+      setRemoteCursors(cursors);
+    };
+
+    awareness.on("change", onAwarenessChange);
+    return () => awareness.off("change", onAwarenessChange);
+  }, []);
+
+  // Drawing logic
+  useEffect(() => {
+    const activeLayerObjects = canvas.children.filter(
+      (obj) => obj.layerId === activeLayerId
+    );
+
+    const allObjects = newDraw && newDraw.layerId === activeLayerId
+      ? [...activeLayerObjects, newDraw]
+      : activeLayerObjects;
+
+    redrawCanvas(canvasRef, allObjects);
+  }, [canvas, newDraw, activeLayerId]);
+
+  const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const coords = getCanvasCoordinates(e, canvasRef);
 
     const newObject: DrawingObject = {
@@ -62,122 +98,83 @@ const startDrawing = useCallback(
       color: brushColor,
       size: brushSize[0],
       filled: false,
-      layerId: activeLayerId, // Use activeLayerId instead of hardcoded 0
+      layerId: activeLayerId,
       boundingBox: { x: coords.x, y: coords.y, width: 0, height: 0 },
       children: [],
       createdAt: new Date().toISOString(),
     };
 
     setNewDraw(newObject);
-  },
-  [brushColor, brushSize, activeLayerId] // Add activeLayerId as dependency
-);
+  }, [brushColor, brushSize, activeLayerId]);
 
-  const draw = useCallback(
-    (
-      e:
-        | React.MouseEvent<HTMLCanvasElement>
-        | React.TouchEvent<HTMLCanvasElement>
-    ) => {
-      if (!newDraw) return;
+  const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!newDraw) return;
+    const coords = getCanvasCoordinates(e, canvasRef);
+    setNewDraw((prev) => prev ? { ...prev, points: [...prev.points, coords] } : null);
+  }, [newDraw]);
 
-      const coords = getCanvasCoordinates(e, canvasRef);
+  const stopDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!newDraw) return;
+    const coords = getCanvasCoordinates(e, canvasRef);
+    setNewDraw((prev) => prev ? { ...prev, points: [...prev.points, coords] } : null);
 
-      setNewDraw((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          points: [...prev.points, coords],
-        };
-      });
-    },
-    [newDraw]
-  );
+    const updatedCanvas: DrawingObject = {
+      ...canvas,
+      children: [...canvas.children, newDraw],
+    };
 
-  const stopDrawing = useCallback(
-    (
-      e:
-        | React.MouseEvent<HTMLCanvasElement>
-        | React.TouchEvent<HTMLCanvasElement>
-    ) => {
-      if (!newDraw) return;
-
-      const coords = getCanvasCoordinates(e, canvasRef);
-      setNewDraw((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          points: [...prev.points, coords],
-        };
-      });
-
-      setCanvas((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          children: [...prev.children, newDraw],
-        };
-      });
-
-      setNewDraw(null);
-    },
-    [newDraw, setCanvas]
-  );
+    updateSharedCanvas(updatedCanvas);
+    setNewDraw(null);
+  }, [newDraw, canvas]);
 
   const clearCanvas = useCallback(() => {
-    setCanvas((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        children: [],
-      };
-    });
-  }, [setCanvas]);
+    const clearedCanvas: DrawingObject = {
+      ...canvas,
+      children: [],
+    };
+    updateSharedCanvas(clearedCanvas);
+  }, [canvas]);
 
   const handleSaveCanvas = async () => {
     await updateCanvas(canvas.id, canvas);
-    window.history.back()
-  }
+    window.history.back();
+  };
 
-// First useEffect - for redrawing when objects change
-useEffect(() => {
-  // Filter canvas children to only include objects from the active layer
-  const activeLayerObjects = canvas.children.filter(
-    (obj) => obj.layerId === activeLayerId
-  );
-  
-  // Include the current drawing if it exists and belongs to active layer
-  const allObjects = newDraw && newDraw.layerId === activeLayerId
-    ? [...activeLayerObjects, newDraw]
-    : activeLayerObjects;
-    
-  redrawCanvas(canvasRef, allObjects);
-}, [canvas, newDraw, activeLayerId]); // Add activeLayerId as dependency
-
-  // Update canvas size and redraw when needed
+  // Resize canvas
   useEffect(() => {
-    const canvasPreview = canvasRef.current;
-    if (!canvasPreview) return;
-  
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return;
+
     const resizeCanvas = () => {
-      const rect = canvasPreview.getBoundingClientRect();
-      canvasPreview.width = rect.width;
-      canvasPreview.height = rect.height;
-  
-      // Filter by active layer when resizing
+      const rect = canvasEl.getBoundingClientRect();
+      canvasEl.width = rect.width;
+      canvasEl.height = rect.height;
+
       const activeLayerObjects = canvas.children.filter(
         (obj) => obj.layerId === activeLayerId
       );
       redrawCanvas(canvasRef, activeLayerObjects);
     };
-  
+
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-  
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [canvas, activeLayerId]);
+
+  // Handle mouse move for awareness
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return;
+
+    const rect = canvasEl.getBoundingClientRect();
+    const coords = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     };
-  }, [canvas, activeLayerId]); // Add activeLayerId as dependency
+
+    awareness.setLocalStateField("cursor", coords);
+    draw(e);
+  };
 
   return (
     <div className="h-screen w-full flex-1 flex flex-col bg-gray-50">
@@ -192,36 +189,33 @@ useEffect(() => {
         />
       </div>
       <div className="flex flex-1 mx-4 mb-4 gap-4">
-      <CanvasLayers
+        <CanvasLayers
           activeLayerId={activeLayerId}
           setActiveLayerId={setActiveLayerId}
           canvas={canvas}
-          setCanvas={setCanvas}
+          setCanvas={updateSharedCanvas}
         />
         <div className="flex-1 relative">
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full border border-gray-300 rounded-lg shadow-lg bg-white"
             onMouseDown={startDrawing}
-            onMouseMove={draw}
+            onMouseMove={handleMouseMove}
             onMouseUp={stopDrawing}
             onMouseLeave={stopDrawing}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              startDrawing(e);
-            }}
-            onTouchMove={(e) => {
-              e.preventDefault();
-              draw(e);
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              stopDrawing(e);
-            }}
-            style={{
-              cursor: "crosshair",
-            }}
+            onTouchStart={(e) => { e.preventDefault(); startDrawing(e); }}
+            onTouchMove={(e) => { e.preventDefault(); draw(e); }}
+            onTouchEnd={(e) => { e.preventDefault(); stopDrawing(e); }}
+            style={{ cursor: "crosshair" }}
           />
+
+          {Object.entries(remoteCursors).map(([clientId, cursor]) => (
+            <div
+              key={clientId}
+              className="absolute w-3 h-3 bg-red-500 rounded-full pointer-events-none"
+              style={{ left: cursor.x, top: cursor.y }}
+            />
+          ))}
         </div>
       </div>
     </div>
