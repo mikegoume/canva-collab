@@ -1,7 +1,7 @@
 "use client";
 
 import { v4 as uuidv4 } from "@/lib/uuid";
-import { Canvas, DrawingObject } from "@/types/canvas";
+import { DrawingObject } from "@/types/canvas";
 
 const STORAGE_KEY = "canvas-creator-data";
 
@@ -33,21 +33,20 @@ export const getCanvas = async (id: string): Promise<DrawingObject> => {
   const canvas = storedData[id];
 
   if (!canvas) {
-    throw new Error("Canvas not found");
+    throw new Error("DrawingObject not found");
   }
 
   return canvas;
 };
 
 // Create a new canvas
-export const createCanvas = async (canvas: DrawingObject): Promise<string> => {
+export const createCanvas = async (canvas: Omit<DrawingObject, "id">): Promise<string> => {
   const id = uuidv4();
   const storedData = getStoredData();
 
   storedData[id] = {
     ...canvas,
     id,
-    createdAt: new Date().toISOString(),
   };
 
   saveStoredData(storedData);
@@ -62,7 +61,7 @@ export const updateCanvas = async (
   const storedData = getStoredData();
 
   if (!storedData[id]) {
-    throw new Error("Canvas not found");
+    throw new Error("DrawingObject not found");
   }
 
   storedData[id] = {
@@ -79,7 +78,7 @@ export const deleteCanvas = async (id: string): Promise<void> => {
   const storedData = getStoredData();
 
   if (!storedData[id]) {
-    throw new Error("Canvas not found");
+    throw new Error("DrawingObject not found");
   }
 
   delete storedData[id];

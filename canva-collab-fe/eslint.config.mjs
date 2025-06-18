@@ -1,6 +1,5 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
-import prettierRecommended from "eslint-plugin-prettier/recommended";
 import reactPlugin from "eslint-plugin-react";
 import hooksPlugin from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
@@ -38,10 +37,8 @@ const eslintConfig = [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
 
-  prettierRecommended,
   {
     rules: {
-      "prettier/prettier": ["warn"],
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-ts-comment": "off",
@@ -108,7 +105,12 @@ const eslintConfig = [
     },
     ignores: ["*.test.tsx"],
   },
+  {
+    ignores: [
+      '**/.next/**',
+      '**/node_modules/**',
+    ],
+  },
 ];
 
 export default eslintConfig;
-

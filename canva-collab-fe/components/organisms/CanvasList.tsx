@@ -90,34 +90,14 @@ export default function CanvasList() {
         >
           <CardContent className="p-0">
             <Link href={`/canvas/${canvas.id}`}>
-              <div className="flex justify-center items-center h-40 border-b bg-muted">
-                <div className="relative size-3/4 bg-background">
-                  {canvas.elements.slice(0, 3).map((element, idx) => {
-                    if (element.type === "rectangle") {
-                      return (
-                        <div
-                          key={idx}
-                          className="absolute"
-                          style={{
-                            left: `${(element.x / canvas.width) * 100}%`,
-                            top: `${(element.y / canvas.height) * 100}%`,
-                            width: `${(element.width / canvas.width) * 100}%`,
-                            height: `${(element.height / canvas.height) * 100}%`,
-                            backgroundColor:
-                              element.backgroundColor || "#cbd5e1",
-                          }}
-                        />
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
+              <div className="bg-muted h-40 flex items-center justify-center border-b">
+                <div className="w-3/4 h-3/4 bg-background relative"></div>
               </div>
             </Link>
           </CardContent>
           <CardFooter className="flex justify-between items-center p-4">
             <div>
-              <h3 className="font-medium">{canvas.name}</h3>
+              <h3 className="font-medium">{canvas.title}</h3>
               <p className="text-xs text-muted-foreground">
                 Updated{" "}
                 {formatDistanceToNow(new Date(canvas.createdAt), {
@@ -147,8 +127,8 @@ export default function CanvasList() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Canvas</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete &quot;{canvas.name}&quot;?
-                      This action cannot be undone.
+                      Are you sure you want to delete &quot;{canvas.title}
+                      &quot;? This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

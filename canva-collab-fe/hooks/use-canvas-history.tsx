@@ -1,7 +1,8 @@
 "use client";
 
-import { DrawingObject } from "@/types/canvas";
 import { useCallback, useState } from "react";
+
+import { DrawingObject } from "@/types/canvas";
 
 export function useCanvasHistory(initialCanvas: DrawingObject) {
   const [history, setHistory] = useState<DrawingObject[]>([initialCanvas]);

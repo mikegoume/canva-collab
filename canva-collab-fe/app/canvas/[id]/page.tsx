@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import CanvasEditor from "@/components/organisms/CanvasEditor";
+import CanvasEditor2 from "@/components/organisms/CanvasEditor2";
 import { Button } from "@/components/ui/button";
 import { getCanvas } from "@/lib/canvas-services";
-import { Canvas, DrawingObject } from "@/types/canvas";
+import { DrawingObject } from "@/types/canvas";
 
 export default function CanvasPage() {
   const params = useParams();
+  const canvasId = params.id as string;
+
   const [canvas, setCanvas] = useState<DrawingObject | null>(null);
   const [loading, setLoading] = useState(true);
-  const canvasId = params.id as string;
 
   useEffect(() => {
     const loadCanvas = async () => {
@@ -32,29 +33,6 @@ export default function CanvasPage() {
       loadCanvas();
     }
   }, [canvasId]);
-
-  // const handleSave = async () => {
-  //   if (!canvas) return;
-
-  //   try {
-  //     await updateCanvas(canvasId, canvas);
-  //     //TODO: Handle success
-  //   } catch (error) {
-  //     //TODO: Handle error
-  //     console.error(error);
-  //   }
-  // };
-
-  // const handleDelete = async () => {
-  //   try {
-  //     await deleteCanvas(canvasId);
-  //     //TODO: Handle success
-  //     router.push("/");
-  //   } catch (error) {
-  //     //TODO: Handle error
-  //     console.error(error);
-  //   }
-  // };
 
   if (loading) {
     return (
@@ -82,13 +60,10 @@ export default function CanvasPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col">
+    <div className="flex flex-col">
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-auto p-4">
-          <CanvasEditor
-            canvas={canvas}
-            // onCanvasUpdate={handleCanvasUpdate}
-          />
+        <div className="flex-1">
+          <CanvasEditor2 canvas={canvas} setCanvas={setCanvas} />
         </div>
       </div>
     </div>
