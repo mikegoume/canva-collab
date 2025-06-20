@@ -16,6 +16,7 @@ function CreateCanvasButton() {
     // TODO: Create new canvas
     try {
       const newDrawingObject: Omit<DrawingObject, "id"> = {
+        title: "Freehand Canvas",
         type: "draw",
         mode: "freehand",
         points: [],
@@ -38,8 +39,8 @@ function CreateCanvasButton() {
   };
 
   return (
-    <Button size="lg" className="mt-4 gap-2" onClick={handleCreateNewCanvas}>
-      <PlusCircle className="h-5 w-5" />
+    <Button size="lg" className="gap-2 mt-4" onClick={handleCreateNewCanvas}>
+      <PlusCircle className="size-5" />
       Create New Canvas
     </Button>
   );

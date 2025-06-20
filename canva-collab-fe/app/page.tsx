@@ -14,7 +14,6 @@ export default function Home() {
         </p>
         <CreateCanvasButton />
       </div>
-
       <section className="my-12">
         <h2 className="text-2xl font-semibold mb-6">Your Canvases</h2>
         <CanvasList />

@@ -68,10 +68,10 @@ export const calculateBoundingBox = (obj: DrawingObject): BoundingBox => {
   }
 
   if (obj.type === "draw") {
-    let minX = Number.POSITIVE_INFINITY,
-      minY = Number.POSITIVE_INFINITY,
-      maxX = Number.NEGATIVE_INFINITY,
-      maxY = Number.NEGATIVE_INFINITY;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
 
     obj.points.forEach((point) => {
       minX = Math.min(minX, point.x);

@@ -40,9 +40,7 @@ export const getCanvas = async (id: string): Promise<DrawingObject> => {
 };
 
 // Create a new canvas
-export const createCanvas = async (
-  canvas: Omit<DrawingObject, "id">,
-): Promise<string> => {
+export const createCanvas = async (canvas: Omit<DrawingObject, "id">): Promise<string> => {
   const id = uuidv4();
   const storedData = getStoredData();
 

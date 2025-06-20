@@ -1,4 +1,4 @@
-type DrawingMode =
+export type DrawingMode =
   | "select"
   | "freehand"
   | "rectangle"
@@ -11,7 +11,7 @@ type DrawingMode =
   | "arrow"
   | "hexagon";
 
-type DrawingType = "draw" | "shape" | "text" | "group";
+export type DrawingType = "draw" | "shape" | "text" | "group";
 
 export interface Point {
   x: number;

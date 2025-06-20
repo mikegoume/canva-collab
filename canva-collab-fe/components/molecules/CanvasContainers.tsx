@@ -22,10 +22,10 @@ function CanvasContainers({
   setTextPosition,
 }: any) {
   return (
-    <div className="flex-1 relative">
+    <div className="relative flex-1">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full border border-gray-300 rounded-lg shadow-lg bg-white"
+        className="absolute inset-0 bg-white rounded-lg border border-gray-300 shadow-lg size-full"
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}
@@ -55,13 +55,13 @@ function CanvasContainers({
       {/* Preview Canvas */}
       <canvas
         ref={previewCanvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 pointer-events-none size-full"
       />
 
       {/* Selection Canvas */}
       <canvas
         ref={selectionCanvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 pointer-events-none size-full"
       />
 
       {/* Text Input */}

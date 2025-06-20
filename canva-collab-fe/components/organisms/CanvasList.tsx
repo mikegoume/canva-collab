@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -19,50 +19,39 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { deleteCanvas, getAllCanvases } from "@/lib/canvas-services";
-import { DrawingObject } from "@/types/canvas";
 
 export default function CanvasList() {
-  const [canvases, setCanvases] = useState<DrawingObject[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const loadCanvases = async () => {
-      try {
-        const canvasData = await getAllCanvases();
-        setCanvases(canvasData);
-      } catch (error) {
-        //TODO: Handle error
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    data: canvases = [],
+    error,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["canvases"],
+    queryFn: getAllCanvases,
+  });
 
-    loadCanvases();
-  }, []);
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteCanvas(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["canvases"] });
+    },
+  });
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteCanvas(id);
-      setCanvases(canvases.filter((canvas) => canvas.id !== id));
-    } catch (error) {
-      //TODO: Handle error
-      console.error(error);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardContent className="p-0">
-              <div className="bg-muted h-40"></div>
+              <div className="h-40 bg-muted"></div>
             </CardContent>
             <CardFooter className="p-4">
               <div className="space-y-2 w-full">
-                <div className="h-5 bg-muted rounded w-1/2"></div>
-                <div className="h-4 bg-muted rounded w-1/4"></div>
+                <div className="w-1/2 h-5 rounded bg-muted"></div>
+                <div className="w-1/4 h-4 rounded bg-muted"></div>
               </div>
             </CardFooter>
           </Card>
@@ -71,10 +60,18 @@ export default function CanvasList() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {(error as Error).message}
+      </div>
+    );
+  }
+
   if (canvases.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground mb-4">
+      <div className="py-12 text-center">
+        <p className="mb-4 text-muted-foreground">
           You don&apos;t have any canvases yet.
         </p>
         <Link href="/canvas/new">
@@ -85,7 +82,7 @@ export default function CanvasList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {canvases.map((canvas) => (
         <Card
           key={canvas.id}
@@ -94,15 +91,13 @@ export default function CanvasList() {
           <CardContent className="p-0">
             <Link href={`/canvas/${canvas.id}`}>
               <div className="bg-muted h-40 flex items-center justify-center border-b">
-                <div className="w-3/4 h-3/4 bg-background relative">
-                  
-                </div>
+                <div className="w-3/4 h-3/4 bg-background relative"></div>
               </div>
             </Link>
           </CardContent>
-          <CardFooter className="p-4 flex justify-between items-center">
+          <CardFooter className="flex justify-between items-center p-4">
             <div>
-              <h3 className="font-medium">{canvas.name}</h3>
+              <h3 className="font-medium">{canvas.title}</h3>
               <p className="text-xs text-muted-foreground">
                 Updated{" "}
                 {formatDistanceToNow(new Date(canvas.createdAt), {
@@ -112,8 +107,8 @@ export default function CanvasList() {
             </div>
             <div className="flex space-x-1">
               <Link href={`/canvas/${canvas.id}`}>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Edit2 className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="size-8">
+                  <Edit2 className="size-4" />
                   <span className="sr-only">Edit</span>
                 </Button>
               </Link>
@@ -122,9 +117,9 @@ export default function CanvasList() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    className="size-8 text-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                     <span className="sr-only">Delete</span>
                   </Button>
                 </AlertDialogTrigger>
@@ -132,14 +127,14 @@ export default function CanvasList() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Canvas</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete &quot;{canvas.name}&quot;?
-                      This action cannot be undone.
+                      Are you sure you want to delete &quot;{canvas.title}
+                      &quot;? This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => handleDelete(canvas.id as string)}
+                      onClick={() => deleteMutation.mutate(canvas.id as string)}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
                       Delete
