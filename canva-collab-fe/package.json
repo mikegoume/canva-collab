@@ -32,7 +32,8 @@
     "sonner": "^2.0.4",
     "tailwind-merge": "^3.3.0",
     "typescript-eslint": "^8.33.0",
-    "y-websocket": "^3.0.0"
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.27"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

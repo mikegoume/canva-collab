@@ -1,3 +1,4 @@
+
 "use client";
 
 import type React from "react";
@@ -19,12 +20,12 @@ interface ICanvasToolbar2Props {
 }
 
 function CanvasToolbar2({
-  clearCanvas,
   brushColor,
   brushSize,
+  clearCanvas,
   setBrushColor,
   setBrushSize,
-  handleSaveCanvas
+  handleSaveCanvas,
 }: ICanvasToolbar2Props) {
   return (
     <Card className="m-4 p-4 shadow-lg flex flex-row justify-center">

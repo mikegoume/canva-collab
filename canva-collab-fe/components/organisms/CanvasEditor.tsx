@@ -1,3 +1,4 @@
+
 // "use client";
 
 // import type React from "react";
@@ -21,8 +22,8 @@
 //   ResizeHandle,
 // } from "@/types/canvas";
 
-// import CanvasLayers from "../mollecules/CanvasLayers";
-// import CanvasToolbar from "../mollecules/CanvasToolbar";
+// import CanvasLayers from "../molecules/CanvasLayers";
+// import CanvasToolbar from "../molecules/CanvasToolbar";
 
 // export default function CanvasEditor() {
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
